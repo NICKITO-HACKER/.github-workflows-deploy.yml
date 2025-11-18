@@ -1,219 +1,291 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Casinito — Nivel 4 (Pro)</title>
-<meta name="description" content="Casinito local avanzado: reels reales, ruleta giratoria, spaceman pro, confetti avanzado, haptics, login, ranking y sonidos custom." />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Casinito — Nivel 5 (Interfaz PRO)</title>
+<meta name="description" content="Casinito nivel PRO: luces, animaciones, partículas, confetti y microinteracciones. Sonidos en la raíz: spin.wav, win.wav, lose.wav" />
 <style>
-  /* THEME: ROJO/NEGRO + DORADO */
   :root{
-    --bg-1:#120000; --bg-2:#020000; --panel:#140707; --accent:#c60000; --gold:#d4af37; --muted:#dbd2c8;
-    --glass:rgba(255,255,255,0.02); --radius:12px; --shadow:0 14px 50px rgba(0,0,0,0.6);
+    --bg1:#090204; --bg2:#1b0000; --panel:#140505; --gold:#d4af37; --accent:#c60000; --muted:#e6d9cf;
+    --glass:rgba(255,255,255,0.03);
   }
-  *{box-sizing:border-box}html,body{height:100%}body{margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;background:radial-gradient(circle at 20% 20%, rgba(198,0,0,0.06), transparent 12%), linear-gradient(180deg,var(--bg-1),var(--bg-2));color:#fff;padding:14px;display:flex;justify-content:center}
-  .app{width:min(1200px,98%);display:grid;grid-template-columns:1fr 380px;gap:16px;align-items:start}
-  header{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-  h1{font-size:20px;margin:0;color:var(--gold);text-shadow:0 2px 6px rgba(0,0,0,0.6)}
-  .balance{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:8px 12px;border-radius:10px;color:var(--muted);font-weight:700;box-shadow:var(--shadow)}
-  .card{background:linear-gradient(180deg,var(--panel),#0b0808);border-radius:12px;padding:14px;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,0.03);position:relative;overflow:visible}
+  *{box-sizing:border-box} html,body{height:100%} body{margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;background:
+    radial-gradient(circle at 10% 10%, rgba(198,0,0,0.05), transparent 12%),
+    linear-gradient(180deg,var(--bg1),#000);color:var(--muted);padding:16px;display:flex;justify-content:center;align-items:flex-start}
+  .wrap{width:min(1200px,96%);display:grid;grid-template-columns:1fr 380px;gap:16px;align-items:start}
+
+  header{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:12px;background:linear-gradient(90deg,rgba(255,255,255,0.02),transparent)}
+  h1{margin:0;color:var(--gold);letter-spacing:1px;font-weight:800;text-shadow:0 6px 24px rgba(198,0,0,0.08)}
+  .balance{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:8px 14px;border-radius:12px;display:inline-flex;gap:10px;align-items:center;position:relative;overflow:visible}
+  .balance .glow{position:absolute;left:-40%;right:-40%;top:-20%;bottom:-20%;background:radial-gradient(circle at 50% 30%, rgba(212,159,55,0.08), transparent 30%);filter:blur(18px);z-index:-1;animation:glowPulse 3.6s ease-in-out infinite}
+
+  @keyframes glowPulse{0%{opacity:.6;transform:scale(.98)}50%{opacity:1;transform:scale(1.02)}100%{opacity:.6;transform:scale(.98)}}
+
+  /* marquee lights */
+  .marquee{height:12px;border-radius:999px;background:linear-gradient(90deg,transparent 0, rgba(212,159,55,0.08) 20%, transparent 40%);position:relative;overflow:hidden;margin-top:8px}
+  .marquee::before{content:'';position:absolute;left:-40%;top:0;bottom:0;width:40%;background:linear-gradient(90deg,rgba(214,159,55,0.9),rgba(255,210,120,0.6));filter:blur(6px);animation:marquee 2.6s linear infinite}
+  @keyframes marquee{0%{left:-40%}100%{left:120%}}
+
+  /* cards + effects */
+  .card{background:linear-gradient(180deg,var(--panel),#0b0606);border-radius:12px;padding:14px;box-shadow:0 20px 60px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.03);position:relative;overflow:visible}
+  .card .title{display:flex;align-items:center;justify-content:space-between}
+
+  /* reels */
+  .reels{display:flex;gap:12px;justify-content:center;align-items:center;margin-top:12px}
+  .reel{width:100px;height:100px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.06));display:flex;align-items:center;justify-content:center;font-size:46px;font-weight:900;position:relative;transform-origin:center;box-shadow:inset 0 -6px 18px rgba(0,0,0,0.45)}
+  .reel.spinAnim{animation:reelSpin .6s cubic-bezier(.16,.9,.32,1)}
+  @keyframes reelSpin{0%{transform:translateY(-30px) rotateX(20deg) scale(.95);opacity:0}50%{transform:translateY(8px) rotateX(-6deg) scale(1.02)}100%{transform:translateY(0) rotateX(0) scale(1);opacity:1}}
+
+  /* buttons with ripple */
+  .controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  button{background:linear-gradient(90deg,var(--accent),#ff9b4c);border:none;color:#080508;padding:12px 16px;border-radius:12px;font-weight:800;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 10px 28px rgba(198,0,0,0.12);transition:transform .12s,box-shadow .12s}
+  button.secondary{background:transparent;border:1px solid rgba(255,255,255,0.05);color:var(--muted)}
+  button:active{transform:translateY(1px)}
+  button .ripple{position:absolute;border-radius:999px;transform:scale(0);opacity:.6;background:rgba(255,255,255,0.18);pointer-events:none}
+
+  /* rocket trail */
+  .space-visual{height:130px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+  .trail{position:absolute;bottom:22px;width:8px;background:linear-gradient(180deg,var(--gold),transparent);height:0;border-radius:8px;opacity:0.95;transition:height .12s linear}
+
+  /* confetti canvas */
+  #confetti{position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:9999}
+
+  /* small text */
   .tiny{font-size:13px;color:var(--muted)}
-  .reel-wrap{display:flex;gap:14px;justify-content:center;align-items:center}
-  .reel-viewport{width:94px;height:94px;overflow:hidden;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.06));display:flex;align-items:center;justify-content:center;position:relative}
-  .reel-track{display:flex;flex-direction:column;align-items:center;justify-content:flex-start}
-  .reel-item{width:94px;height:94px;display:flex;align-items:center;justify-content:center;font-size:44px}
-  .spin-anim{animation-timing-function:cubic-bezier(.16,.9,.32,1);}
-  .wheel-wrap{display:flex;align-items:center;gap:12px}
-  svg.wheel{width:220px;height:220px;transform-origin:center center;filter:drop-shadow(0 10px 30px rgba(0,0,0,0.6))}
-  .wheel-pointer{width:18px;height:40px;background:var(--gold);clip-path:polygon(50% 0,100% 100%,0 100%);margin-left:6px}
-  .space-visual{height:160px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
-  .rocket{width:56px;height:56px;border-radius:8px;background:linear-gradient(180deg,#fff0,#fff);display:flex;align-items:center;justify-content:center;font-size:28px;position:relative;box-shadow:0 8px 30px rgba(198,0,0,0.12)}
-  .trail{position:absolute;bottom:22px;width:6px;background:linear-gradient(180deg,var(--gold),transparent);height:0;border-radius:6px;opacity:0.9;}
-  #confettiCanvas{position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:9998}
-  #spectatorOverlay{position:fixed;right:14px;bottom:14px;width:360px;max-height:70vh;background:linear-gradient(180deg,#0b0b0b,#0e0b0b);border-radius:10px;padding:8px;border:1px solid rgba(255,255,255,0.04);overflow:auto;z-index:9999}
-  @media (max-width:980px){ .app{grid-template-columns:1fr} aside{order:2} .reel-viewport{width:78px;height:78px}.reel-item{font-size:36px} }
+
+  /* responsive */
+  @media (max-width:980px){ .wrap{grid-template-columns:1fr} aside{order:2} .reel{width:78px;height:78px;font-size:36px} }
 </style>
 </head>
 <body>
-  <canvas id="confettiCanvas"></canvas>
-  <div class="app">
-    <header>
-      <h1>🎰 Casinito PRO — Nivel 4</h1>
-      <div class="balance">Usuario: <strong id="currentUser">—</strong> · Saldo: $<span id="saldo">1000</span></div>
-    </header>
+<canvas id="confetti"></canvas>
 
-    <main>
-      <!-- Reels pro -->
-      <section class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center"><div><strong>Tragamonedas PRO</strong><div class="tiny">Reels reales • Blur motion • Dinámico</div></div><div class="tiny">Apuesta: $<span id="betDisp">50</span></div></div>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>🎰 Casinito — Interfaz PRO</h1>
+      <div class="marquee" aria-hidden="true"></div>
+    </div>
+    <div class="balance" id="balanceBox">
+      <div class="glow"></div>
+      Saldo: <strong style="margin-left:8px">$<span id="saldo">1000</span></strong>
+    </div>
+  </header>
 
-        <div style="margin-top:12px;display:flex;gap:12px;align-items:center;flex-direction:column">
-          <div class="reel-wrap" id="reelWrap"></div>
-          <div style="display:flex;gap:10px;align-items:center">
-            <button id="spinPro">Girar PRO</button>
-            <button class="secondary" id="autoPro">Auto x5</button>
-            <button class="secondary" id="fastSpin">Spin Rápido</button>
-          </div>
-          <div class="result" id="slotResult">—</div>
-        </div>
-      </section>
-
-      <!-- Ruleta pro -->
-      <section class="card" style="margin-top:12px">
-        <div style="display:flex;justify-content:space-between;align-items:center"><div><strong>Ruleta Giratoria</strong><div class="tiny">Gira y desacelera</div></div><div class="tiny">Pago x2</div></div>
-        <div style="margin-top:12px;display:flex;gap:12px;align-items:center">
-          <div class="wheel-wrap">
-            <svg class="wheel" viewBox="0 0 200 200" id="wheelSVG">
-              <g id="wheelGroup" transform="translate(100,100)">
-                <!-- 8 slices -->
-              </g>
-            </svg>
-            <div class="wheel-pointer" id="wheelPointer"></div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:6px">
-            <button id="spinWheel">Girar Ruleta</button>
-            <div id="wheelResult" class="tiny">—</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Spaceman pro -->
-      <section class="card" style="margin-top:12px">
-        <div style="display:flex;justify-content:space-between;align-items:center"><div><strong>Spaceman PRO</strong><div class="tiny">Ascenso curvado • Explosión con partículas</div></div><div class="tiny">Apuesta: $<span id="betSpaceDisp">50</span></div></div>
-        <div class="space-visual" id="spaceVisual" style="margin-top:10px">
-          <div class="trail" id="rocketTrail"></div>
-          <div class="rocket" id="rocket">🚀</div>
-        </div>
-        <div style="display:flex;gap:8px;margin-top:10px"><button id="startSpacePro">Iniciar</button><button class="secondary" id="cashOutPro">Retirar</button></div>
-        <div class="tiny" id="spaceInfo">x1.00</div>
-      </section>
-
-    </main>
-
-    <aside>
-      <div class="card">
-        <h4 style="margin:0">Ranking & Controles</h4>
-        <div class="tiny" style="margin-top:8px">Ranking local y modo espectador</div>
-        <div id="leaderboard" class="history" style="margin-top:8px">—</div>
-        <div style="margin-top:8px;display:flex;gap:8px">
-          <button id="specToggle" class="secondary">Toggle Espectador</button>
-          <button id="downloadRepo" class="secondary">Generar repo</button>
-        </div>
+  <main>
+    <section class="card" id="slotsCard">
+      <div class="title"><strong>Tragamonedas — Deluxe</strong><div class="tiny">Apuesta: $<span id="bet">50</span></div></div>
+      <div class="reels" id="reels">
+        <div class="reel" id="r1">❔</div>
+        <div class="reel" id="r2">❔</div>
+        <div class="reel" id="r3">❔</div>
       </div>
 
-      <div class="card">
-        <h4 style="margin:0">Historial</h4>
-        <div class="tiny">Últimas 200 acciones</div>
-        <div id="history" class="history" style="margin-top:8px">—</div>
+      <div class="controls" style="margin-top:12px">
+        <button id="spinBtn">Girar</button>
+        <button class="secondary" id="autoBtn">Auto x5</button>
+        <button class="secondary" id="fastBtn">Spin Rápido</button>
       </div>
 
-      <div class="card tiny">Consejo: para mejores efectos subida de 3 sonidos (spin/win/lose) y activar VU.</div>
-    </aside>
-  </div>
+      <div id="slotMsg" class="tiny" style="margin-top:12px">—</div>
+      <div style="height:8px"></div>
+    </section>
 
-  <!-- Spectator overlay -->
-  <div id="spectatorOverlay" class="hide" style="display:none"></div>
+    <section class="card" style="margin-top:12px">
+      <div class="title"><strong>Spaceman PRO (mini)</strong><div class="tiny">Retirá antes de explotar</div></div>
+      <div class="space-visual" style="margin-top:12px">
+        <div class="trail" id="trail"></div>
+        <div id="rocket" style="font-size:40px">🚀</div>
+      </div>
+      <div class="controls" style="margin-top:12px">
+        <button id="startSpace">Iniciar</button>
+        <button class="secondary" id="cashSpace">Retirar</button>
+      </div>
+      <div id="spaceMsg" class="tiny" style="margin-top:10px">x1.00</div>
+    </section>
+  </main>
+
+  <aside>
+    <div class="card">
+      <div class="title"><strong>Controles & Sounds</strong><div class="tiny">Sonidos en raíz: spin.wav win.wav lose.wav</div></div>
+      <div style="margin-top:10px" class="controls">
+        <button id="muteBtn" class="secondary">Mute</button>
+        <button id="downloadBtn" class="secondary">Descargar ZIP</button>
+      </div>
+      <div style="margin-top:12px" class="tiny">Historial</div>
+      <div id="history" style="margin-top:8px;max-height:300px;overflow:auto" class="tiny">—</div>
+    </div>
+  </aside>
+</div>
 
 <script>
-  /* =================== Estado y persistencia =================== */
-  const STORAGE='casinito_v4'; let state={saldo:1000,bet:50,slotPayout:500,history:[],leaderboard:{}}; let currentUser=localStorage.getItem('casinito_user')||null;
-  const saldoEl=document.getElementById('saldo'); const currentUserEl=document.getElementById('currentUser');
+/* ---------- State ---------- */
+let state = { saldo:1000, bet:50, history:[] };
+const saldoEl = document.getElementById('saldo');
+const historyEl = document.getElementById('history');
+const r1 = document.getElementById('r1'), r2 = document.getElementById('r2'), r3 = document.getElementById('r3');
+const spinBtn = document.getElementById('spinBtn'), autoBtn=document.getElementById('autoBtn'), fastBtn=document.getElementById('fastBtn');
+const trail = document.getElementById('trail'), rocket = document.getElementById('rocket'), spaceMsg = document.getElementById('spaceMsg');
+const muteBtn = document.getElementById('muteBtn');
+let audioCtx = null, masterGain = null;
+let soundBuffers = { spin:null, win:null, lose:null };
+let soundOn = true;
 
-  function loadState(){ try{ const raw=localStorage.getItem(STORAGE); if(raw) state=Object.assign(state,JSON.parse(raw)); }catch(e){} saldoEl.textContent=state.saldo; currentUserEl.textContent=currentUser||'—'; renderHistory(); renderLeaderboard(); }
-  function saveState(){ try{ localStorage.setItem(STORAGE,JSON.stringify(state)); }catch(e){} }
+/* ---------- Audio setup (AudioContext) ---------- */
+function initAudio(){
+  if(audioCtx) return;
+  try{
+    audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 1;
+    masterGain.connect(audioCtx.destination);
+  }catch(e){ audioCtx = null; }
+}
+function playFallback(type){
+  if(!audioCtx) return;
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  if(type==='win'){ o.frequency.value=1100; o.type='sawtooth'; g.gain.value=0.08; }
+  else if(type==='lose'){ o.frequency.value=180; o.type='sine'; g.gain.value=0.08; }
+  else { o.frequency.value=700; o.type='square'; g.gain.value=0.06; }
+  o.connect(g); g.connect(masterGain); o.start(); g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+0.18);
+  setTimeout(()=>o.stop(),240);
+}
 
-  function pushHistory(entry){ entry.time=new Date().toISOString(); state.history.unshift(entry); if(state.history.length>200) state.history.pop(); saveState(); renderHistory(); }
-  function renderHistory(){ const el=document.getElementById('history'); if(state.history.length===0){ el.innerHTML='<div class="tiny">— sin historial</div>'; return;} el.innerHTML=''; state.history.slice(0,200).forEach(h=>{ const d=document.createElement('div'); d.style.padding='6px'; d.style.borderBottom='1px solid rgba(255,255,255,0.03)'; d.innerHTML=`<div style="display:flex;justify-content:space-between"><strong>${h.type}</strong><span class="tiny">$${h.saldoAfter}</span></div><div class="tiny">${h.msg} • ${new Date(h.time).toLocaleString()}</div>`; el.appendChild(d); }); }
-  function renderLeaderboard(){ const el=document.getElementById('leaderboard'); const arr=Object.entries(state.leaderboard||{}).map(([n,d])=>({name:n,saldo:d.saldo})); arr.sort((a,b)=>b.saldo-a.saldo); if(arr.length===0){ el.innerHTML='<div class="tiny">— vacío</div>'; return;} el.innerHTML=arr.slice(0,20).map(e=>`<div style="display:flex;justify-content:space-between;padding:6px;border-bottom:1px solid rgba(255,255,255,0.02)"><strong>${e.name}</strong><div class="tiny">$${e.saldo}</div></div>`).join(''); }
-  function updateLeaderboardForUser(name){ if(!name) return; const prev=state.leaderboard[name]||{saldo:state.saldo}; prev.saldo=state.saldo; state.leaderboard[name]=prev; saveState(); renderLeaderboard(); }
-
-  loadState();
-
-  /* =================== REELS PRO =================== */
-  const reelWrap=document.getElementById('reelWrap');
-  function createReel(){ const vp=document.createElement('div'); vp.className='reel-viewport'; const track=document.createElement('div'); track.className='reel-track'; // fill many items
-    for(let i=0;i<24;i++){ const it=document.createElement('div'); it.className='reel-item'; it.textContent = icons[Math.floor(Math.random()*icons.length)]; track.appendChild(it); }
-    vp.appendChild(track); reelWrap.appendChild(vp); return {vp,track}; }
-  // icons array
-  const icons=['🍒','🍋','🔔','⭐','7️⃣','💎','🍀','🔥','🎲','🎯'];
-  // create 3 reels
-  const reels = [createReel(), createReel(), createReel()];
-
-  function spinReels(duration=1400){ // animate translateY of track
-    const results=[]; reels.forEach((r,i)=>{ // final target index
-      const finalIndex = Math.floor(Math.random()*icons.length);
-      results.push(icons[finalIndex]);
-      // clone track to make long scroll
-      const track=r.track; // cancel previous
-      track.style.transition='none';
-      // set current pos
-      const itemHeight=94; const totalItems=track.children.length; const cycles=3 + i; // stagger
-      const shift = (totalItems*itemHeight*cycles) + (finalIndex*itemHeight);
-      requestAnimationFrame(()=>{ track.style.transition = `transform ${duration+(i*260)}ms cubic-bezier(.16,.9,.32,1)`; track.style.transform = `translateY(-${shift}px)`; });
-      // reset after animation
-      setTimeout(()=>{ // set new random content and reset transform
-        for(let k=0;k<track.children.length;k++) track.children[k].textContent = icons[Math.floor(Math.random()*icons.length)]; track.style.transition='none'; track.style.transform='translateY(0)'; }, duration + 500 + (i*260));
-    });
-    return results;
+/* Try to load root sounds (spin.wav, win.wav, lose.wav) into buffers (silent if missing) */
+async function tryLoadSamples(){
+  initAudio();
+  if(!audioCtx) return;
+  const keys = ['spin','win','lose'];
+  for(const k of keys){
+    try{
+      const r = await fetch(`./${k}.wav`);
+      if(!r.ok) { soundBuffers[k]=null; continue; }
+      const arr = await r.arrayBuffer();
+      const buf = await audioCtx.decodeAudioData(arr);
+      soundBuffers[k]=buf;
+    }catch(e){ soundBuffers[k]=null; }
   }
+}
+function playBuffer(buf,vol=1){
+  if(!audioCtx || !buf || !soundOn) return playFallback('spin');
+  const s = audioCtx.createBufferSource(); const g = audioCtx.createGain();
+  s.buffer = buf; g.gain.value = vol; s.connect(g); g.connect(masterGain); s.start(0);
+}
 
-  document.getElementById('spinPro').addEventListener('click', ()=>{ if(state.saldo < state.bet){ alert('Saldo insuficiente'); return; } state.saldo -= state.bet; saldoEl.textContent = state.saldo; const results = spinReels(1400); setTimeout(()=>{ // evaluate
-      let msg = `Apostaste $${state.bet}`; if(results[0]===results[1] && results[1]===results[2]){ state.saldo += state.slotPayout; msg += ` — 3 iguales ${results[0]} GANASTE $${state.slotPayout}`; spawnConfetti(window.innerWidth/2,120,120); updateLeaderboardForUser(currentUser); } else { msg += ' — Perdiste'; }
-      document.getElementById('slotResult').textContent = msg; pushHistory({type:'SLOTS_PRO',msg,saldoAfter:state.saldo}); saveState(); saldoEl.textContent = state.saldo; }, 1800);
-  });
+/* ---------- Utils ---------- */
+function pushHistory(entry){
+  entry.time = new Date().toLocaleTimeString();
+  state.history.unshift(entry); if(state.history.length>200) state.history.pop();
+  renderHistory();
+}
+function renderHistory(){ historyEl.innerHTML = state.history.map(h=>`<div>${h.time} — ${h.type}: ${h.msg} • $${h.saldoAfter}</div>`).join(''); }
+function updateSaldo(){ saldoEl.textContent = state.saldo; document.getElementById('balanceBox')?.classList.add('pulse'); setTimeout(()=>document.getElementById('balanceBox')?.classList.remove('pulse'),300); }
 
-  document.getElementById('autoPro').addEventListener('click', async ()=>{ for(let i=0;i<5;i++){ if(state.saldo < state.bet) break; document.getElementById('spinPro').click(); await new Promise(r=>setTimeout(r,1800)); } });
-  document.getElementById('fastSpin').addEventListener('click', ()=>{ document.getElementById('spinPro').click(); });
+/* ---------- Confetti (improved) ---------- */
+const conf = document.getElementById('confetti'); const cctx = conf.getContext && conf.getContext('2d');
+let parts = [];
+function spawnConfetti(x,y,n=80){
+  if(!cctx) return;
+  const mobile = window.innerWidth<700; const count = mobile?Math.floor(n/3):n;
+  for(let i=0;i<count;i++){
+    parts.push({x:x+(Math.random()*200-100), y:y+(Math.random()*30-15), vx:(Math.random()*14-7), vy:(Math.random()*-18-6), size:2+Math.random()*8, color:['#c60000','#ffd166','#d4af37'][Math.floor(Math.random()*3)], rot:Math.random()*360, life:0, ttl:100+Math.random()*160});
+  }
+}
+function animateConfetti(){
+  if(!cctx) return; cctx.clearRect(0,0,conf.width,conf.height);
+  for(let i=parts.length-1;i>=0;i--){
+    const p = parts[i]; p.vy += 0.45; p.x += p.vx; p.y += p.vy; p.vx *= 0.995; p.rot += 5;
+    cctx.save(); cctx.translate(p.x,p.y); cctx.rotate(p.rot*Math.PI/180); cctx.fillStyle = p.color; cctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*1.6); cctx.restore();
+    p.life++; if(p.y>conf.height+80 || p.life>p.ttl) parts.splice(i,1);
+  }
+  requestAnimationFrame(animateConfetti);
+}
+conf.width = window.innerWidth; conf.height = window.innerHeight; animateConfetti(); window.addEventListener('resize',()=>{ conf.width = window.innerWidth; conf.height = window.innerHeight; });
 
-  /* =================== WHEEL (RUEDA) =================== */
-  const wheelGroup = document.getElementById('wheelGroup'); const wheelSVG = document.getElementById('wheelSVG'); const wheelResult = document.getElementById('wheelResult');
-  // build 8 slices
-  const labels = ['1','2','3','4','5','6','7','8']; const sliceCount = labels.length;
-  function buildWheel(){ wheelGroup.innerHTML=''; for(let i=0;i<sliceCount;i++){ const angle = (360/sliceCount)*i; const g = document.createElementNS('http://www.w3.org/2000/svg','g'); const path = document.createElementNS('http://www.w3.org/2000/svg','path'); const largeR=90; const smallR=0; const a1 = (angle-360/sliceCount/2) * Math.PI/180; const a2 = (angle+360/sliceCount/2) * Math.PI/180; // simple wedge via arc
-      const x1 = Math.cos(a1)*largeR, y1 = Math.sin(a1)*largeR; const x2 = Math.cos(a2)*largeR, y2 = Math.sin(a2)*largeR;
-      const d = `M 0 0 L ${x1} ${y1} A ${largeR} ${largeR} 0 0 1 ${x2} ${y2} z`;
-      path.setAttribute('d',d); path.setAttribute('fill', i%2? '#330000':'#550000'); path.setAttribute('stroke','#000'); wheelGroup.appendChild(path);
-      // label
-      const txt = document.createElementNS('http://www.w3.org/2000/svg','text'); txt.setAttribute('x', Math.cos(angle*Math.PI/180)*50); txt.setAttribute('y', Math.sin(angle*Math.PI/180)*50); txt.setAttribute('text-anchor','middle'); txt.setAttribute('dominant-baseline','middle'); txt.setAttribute('fill','#ffd'); txt.textContent = labels[i]; wheelGroup.appendChild(txt);
+/* ---------- Slots logic (with animations) ---------- */
+const icons = ['🍒','🍋','🔔','⭐','7️⃣','💎','🍀','🔥','🎲'];
+function spinOnce(){
+  if(state.saldo < state.bet){ alert('No tenés saldo'); return; }
+  initAudio(); tryLoadSamples();
+  state.saldo -= state.bet; updateSaldo();
+  // spin anim
+  [r1,r2,r3].forEach(el=>{ el.classList.remove('spinAnim'); void el.offsetWidth; el.classList.add('spinAnim'); });
+  const out1 = icons[Math.floor(Math.random()*icons.length)];
+  const out2 = icons[Math.floor(Math.random()*icons.length)];
+  const out3 = icons[Math.floor(Math.random()*icons.length)];
+  // play spin sound
+  if(soundBuffers.spin) playBuffer(soundBuffers.spin,0.6); else playFallback('spin');
+  setTimeout(()=>{
+    r1.textContent = out1; r2.textContent = out2; r3.textContent = out3;
+    let msg = `Apostaste $${state.bet}`;
+    if(out1===out2 && out2===out3){
+      state.saldo += 500;
+      msg += ` — JACKPOT! Ganaste $500`;
+      spawnConfetti(window.innerWidth/2,120,140);
+      if(soundBuffers.win) playBuffer(soundBuffers.win,1); else playFallback('win');
+    } else {
+      msg += ' — Perdiste';
+      if(soundBuffers.lose) playBuffer(soundBuffers.lose,0.9); else playFallback('lose');
     }
-  }
-  buildWheel();
+    pushHistory({type:'SLOTS', msg, saldoAfter: state.saldo});
+    updateSaldo(); document.getElementById('slotMsg').textContent = msg;
+  },620);
+}
+spinBtn.addEventListener('click', ()=>{ if(audioCtx && audioCtx.state==='suspended') audioCtx.resume(); spinOnce(); });
+autoBtn.addEventListener('click', async ()=>{ for(let i=0;i<5;i++){ if(state.saldo < state.bet) break; spinOnce(); await new Promise(r=>setTimeout(r,900)); } });
+fastBtn.addEventListener('click', ()=>{ spinOnce(); });
 
-  function spinWheel(){ const fullRot = 360*6 + Math.floor(Math.random()*360); wheelGroup.style.transition = 'transform 5s cubic-bezier(.15,.9,.2,1)'; wheelGroup.style.transform = `rotate(${fullRot}deg)`; // compute result after end
-    setTimeout(()=>{ const final = Math.floor(((fullRot%360) / (360/sliceCount))); const index = (sliceCount - final)%sliceCount; wheelResult.textContent = `Salió ${labels[index]}`; pushHistory({type:'WHEEL', msg:`Salió ${labels[index]}`, saldoAfter:state.saldo}); },5200);
-  }
-  document.getElementById('spinWheel').addEventListener('click', spinWheel);
+/* ---------- Spaceman PRO (mini) ---------- */
+let spaceTimer = null, spaceMult = 1, spacePlaying=false;
+document.getElementById('startSpace').addEventListener('click', ()=>{
+  if(spacePlaying) return; if(state.saldo < state.bet){ alert('Saldo insuficiente'); return; }
+  initAudio(); tryLoadSamples();
+  state.saldo -= state.bet; updateSaldo(); spacePlaying=true; spaceMult=1; spaceMsg.textContent='x1.00';
+  rocket.style.transform = 'translateY(0)'; trail.style.height = '6px';
+  let t=0;
+  spaceTimer = setInterval(()=>{
+    t++; spaceMult += 0.03 + Math.random()*0.06;
+    rocket.style.transform = `translateY(-${Math.min(160, Math.pow(1.18,t)*6)}px)`;
+    trail.style.height = `${Math.min(160, spaceMult*8)}px`;
+    spaceMsg.textContent = 'x' + spaceMult.toFixed(2);
+    const chance = Math.min(0.9, 0.02 + t*0.02);
+    if(Math.random() < chance){
+      clearInterval(spaceTimer); spacePlaying=false; spaceMsg.textContent='💥 EXPLOTÓ';
+      spawnConfetti(window.innerWidth/2, window.innerHeight/3, 180); navigator.vibrate && navigator.vibrate([120,60,120]);
+      pushHistory({type:'SPACEMAN', msg:'EXPLOTÓ', saldoAfter: state.saldo});
+    }
+  },110);
+});
+document.getElementById('cashSpace').addEventListener('click', ()=>{
+  if(!spacePlaying) return; clearInterval(spaceTimer); spacePlaying=false; const gain = Math.floor(state.bet * spaceMult); state.saldo += gain; updateSaldo(); spaceMsg.textContent = `Retiraste $${gain}`; spawnConfetti(window.innerWidth/2, window.innerHeight/3, 200); navigator.vibrate && navigator.vibrate([30,20,30]); pushHistory({type:'SPACEMAN', msg:`Retiró x${spaceMult.toFixed(2)} -> $${gain}`, saldoAfter: state.saldo});
+});
 
-  /* =================== SPACEMAN PRO =================== */
-  const rocket = document.getElementById('rocket'); const rocketTrail = document.getElementById('rocketTrail'); const spaceInfo = document.getElementById('spaceInfo'); let spaceTimer=null; let spaceMult=1; let playing=false;
-  function startSpacePro(){ if(playing) return; if(state.saldo < state.bet){ alert('Saldo insuficiente'); return; } state.saldo -= state.bet; saldoEl.textContent = state.saldo; playing=true; spaceMult=1; spaceInfo.textContent = 'x1.00'; rocket.style.transform = 'translateY(0)'; rocketTrail.style.height='0px'; let t=0; spaceTimer = setInterval(()=>{ t++; // exponential growth and increasing chance
-      spaceMult += 0.03 + Math.random()*0.05; rocket.style.transform = `translateY(-${Math.min(120, (Math.pow(1.18,t)*8))}px)`; rocketTrail.style.height = `${Math.min(120, spaceMult*8)}px`; spaceInfo.textContent = 'x'+spaceMult.toFixed(2);
-      // risk
-      const chance = Math.min(0.9, 0.02 + t*0.02);
-      if(Math.random() < chance){ // explode
-        clearInterval(spaceTimer); playing=false; spaceInfo.textContent = '💥 EXPLOTÓ'; spawnConfetti(window.innerWidth/2, window.innerHeight/3, 160); navigator.vibrate && navigator.vibrate([120,60,120]); pushHistory({type:'SPACEMAN', msg:'EXPLOTÓ', saldoAfter:state.saldo}); saveState(); }
-    },120); }
-  function cashOutPro(){ if(!playing) return; clearInterval(spaceTimer); playing=false; const gain = Math.floor(state.bet * spaceMult); state.saldo += gain; saldoEl.textContent = state.saldo; spaceInfo.textContent = `Retiraste $${gain}`; if(soundBuffers.win) playBuffer(soundBuffers.win); else playFallback('win'); spawnConfetti(window.innerWidth/2, window.innerHeight/3, 200); navigator.vibrate && navigator.vibrate([30,20,30]); pushHistory({type:'SPACEMAN', msg:`Retiró x${spaceMult.toFixed(2)} -> $${gain}`, saldoAfter:state.saldo}); updateLeaderboardForUser(currentUser); saveState(); }
-  document.getElementById('startSpacePro').addEventListener('click', startSpacePro); document.getElementById('cashOutPro').addEventListener('click', cashOutPro);
+/* ---------- Ripple effect on buttons ---------- */
+document.querySelectorAll('button').forEach(btn=>{
+  btn.addEventListener('pointerdown', e=>{
+    const rect = btn.getBoundingClientRect();
+    const ripple = document.createElement('div'); ripple.className='ripple';
+    const size = Math.max(rect.width, rect.height)*1.2; ripple.style.width = ripple.style.height = size+'px';
+    ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+    ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
+    btn.appendChild(ripple);
+    setTimeout(()=>{ ripple.style.transform='scale(1)'; ripple.style.opacity='0'; ripple.remove(); }, 500);
+  });
+});
 
-  /* =================== CONFETTI (advanced particles + layers) =================== */
-  const confettiCtx = confettiCanvas.getContext && confettiCanvas.getContext('2d'); let confs = [];
-  function spawnConfetti(x,y,count=80){ if(!confettiCtx) return; const mobile = window.innerWidth < 700; const n = mobile? Math.floor(count/3):count; for(let i=0;i<n;i++){ confs.push({ x:x + (Math.random()*200-100), y:y + (Math.random()*30-15), vx:(Math.random()*14-7), vy:(Math.random()*-18-6), size:2+Math.random()*8, color: ['#c60000','#ffd166','#d4af37','#ff8fb8'][Math.floor(Math.random()*4)], rot:Math.random()*360, life:0, ttl:120 + Math.random()*160 }); } }
-  function updateConfs(){ if(!confettiCtx) return; confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height); for(let i=confs.length-1;i>=0;i--){ const p = confs[i]; p.vy += 0.45; p.x += p.vx; p.y += p.vy; p.vx *= 0.995; p.rot += 4; confettiCtx.save(); confettiCtx.translate(p.x,p.y); confettiCtx.rotate(p.rot*Math.PI/180); confettiCtx.fillStyle = p.color; confettiCtx.fillRect(-p.size/2,-p.size/2,p.size,p.size*1.6); confettiCtx.restore(); p.life++; if(p.y > confettiCanvas.height + 80 || p.life > p.ttl) confs.splice(i,1); } requestAnimationFrame(updateConfs); }
-  updateConfs(); window.addEventListener('resize', ()=>{ confettiCanvas.width = window.innerWidth; confettiCanvas.height = window.innerHeight; }); confettiCanvas.width = window.innerWidth; confettiCanvas.height = window.innerHeight;
+/* ---------- Mute toggle ---------- */
+muteBtn.addEventListener('click', ()=>{ soundOn = !soundOn; muteBtn.textContent = soundOn ? 'Mute' : 'Unmute'; if(audioCtx && audioCtx.state==='suspended') audioCtx.resume(); });
 
-  /* =================== SPECTATOR (simple) =================== */
-  const specToggle = document.getElementById('specToggle'); const specOverlay = document.getElementById('spectatorOverlay'); let specOn=false; specToggle.addEventListener('click', ()=>{ specOn = !specOn; specOverlay.style.display = specOn? 'block':'none'; if(specOn) startSpectator(); else stopSpectator(); }); let specInterval=null; function startSpectator(){ if(specInterval) return; specOverlay.innerHTML = '<div class="tiny">Modo Espectador activo — simulando jugadas</div><div id="specLog"></div>'; const log = document.getElementById('specLog'); specInterval = setInterval(()=>{ const pick=Math.random(); if(pick<0.6){ const a=icons[Math.floor(Math.random()*icons.length)]; const b=icons[Math.floor(Math.random()*icons.length)]; const c=icons[Math.floor(Math.random()*icons.length)]; const el=document.createElement('div'); el.className='tiny'; el.textContent = `[${new Date().toLocaleTimeString()}] SPIN ${a}${b}${c}`; log.insertBefore(el, log.firstChild); if(a===b&&b===c) spawnConfetti(window.innerWidth/2,120,40); } else { const m=(1+Math.random()*7).toFixed(2); const el=document.createElement('div'); el.className='tiny'; el.textContent = `[${new Date().toLocaleTimeString()}] SPACEMAN retiró x${m}`; log.insertBefore(el,log.firstChild); spawnConfetti(window.innerWidth/2,window.innerHeight/3,12); } }, 900); }
-  function stopSpectator(){ if(specInterval) clearInterval(specInterval); specInterval=null; specOverlay.innerHTML=''; }
+/* ---------- Download helper (link to packaged zip if available) ---------- */
+document.getElementById('downloadBtn').addEventListener('click', ()=>{
+  const link = document.createElement('a'); link.href = './casinito_lv_package.zip'; link.download = 'casinito_lv_package.zip'; document.body.appendChild(link); link.click(); document.body.removeChild(link);
+});
 
-  /* =================== Utils: vibration & haptics small wrapper =================== */
-  function haptic(pattern){ try{ navigator.vibrate && navigator.vibrate(pattern); }catch(e){} }
-
-  /* expose for debug */
-  window.__casinito = { state, saveState, loadState, spawnConfetti };
-
+/* ---------- init ---------- */
+updateSaldo(); renderHistory();
+tryLoadSamples();
 </script>
-
-<!-- README: Para publicar en GitHub Pages, subí este archivo y activá Pages en tu repo. Incluye tus sonidos en la misma carpeta. -->
 </body>
 </html>
